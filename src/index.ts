@@ -364,5 +364,3 @@ document.addEventListener("click", () => {
 });
 
 canvas.addEventListener("click", (event) => drawProjectiles(event));
-
-console.log(playerData);
