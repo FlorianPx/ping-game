@@ -1,5 +1,11 @@
-const canvas = document.querySelector<HTMLCanvasElement>('#game-container') as HTMLCanvasElement;
-const ctx = (canvas as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
+import '../src/style/button.css';
+
+const canvas = document.querySelector<HTMLCanvasElement>(
+  '#game-container'
+) as HTMLCanvasElement;
+const ctx = (canvas as HTMLCanvasElement).getContext(
+  '2d'
+) as CanvasRenderingContext2D;
 const modal = document.querySelector('#modal') as HTMLElement;
 
 if (canvas) {
@@ -58,7 +64,13 @@ class Player extends Entity {
 class Projectile extends Player {
   velocity: VelocityType;
 
-  constructor(x: X, y: Y, radius: RadiusType, color: ColorType, velocity: VelocityType) {
+  constructor(
+    x: X,
+    y: Y,
+    radius: RadiusType,
+    color: ColorType,
+    velocity: VelocityType
+  ) {
     super(x, y, radius, color);
     this.velocity = velocity;
   }
@@ -71,7 +83,13 @@ class Projectile extends Player {
 }
 
 class Enemy extends Projectile {
-  constructor(x: X, y: Y, radius: RadiusType, color: ColorType, velocity: VelocityType) {
+  constructor(
+    x: X,
+    y: Y,
+    radius: RadiusType,
+    color: ColorType,
+    velocity: VelocityType
+  ) {
     super(x, y, radius, color, velocity);
   }
 }
@@ -79,7 +97,13 @@ class Enemy extends Projectile {
 class Particle extends Enemy {
   alpha: number;
 
-  constructor(x: X, y: Y, radius: RadiusType, color: ColorType, velocity: VelocityType) {
+  constructor(
+    x: X,
+    y: Y,
+    radius: RadiusType,
+    color: ColorType,
+    velocity: VelocityType
+  ) {
     super(x, y, radius, color, velocity);
     this.alpha = 1;
   }
@@ -107,20 +131,33 @@ const store = new Store();
 const data = window.localStorage.getItem('ping_game_player') as string;
 const playerData = JSON.parse(data) as PlayerDataType;
 
-const newPlayerModal = `<p>Bienvenue sur Ping Game !</p>
-<p>Essaie d'exploser un max de bulles avant qu'elles ne te touchent</p>
-<button id="start-button">Jouer</button>`;
+const getColor = () => {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgb(${r}, ${g}, ${b})`;
+};
 
-const alreadyPlayedModal = (props: PlayerDataType) => `<p>Bienvenue sur Ping Game !</p>
-<p>Essaie de battre ton meilleur score : ${props.bestScore} points</p>
-<button id="start-button">Jouer</button>`;
+const cssTitle = 'text-xl text-white font-bold';
+const cssSubTitle = 'text-lg text-white font-semibold';
+const cssText = 'text-base text-white';
+const cssButton = 'w-44 flex justify-center items-center space-x-4';
+
+const newPlayerModal = `<p class="${cssTitle}">Bienvenue sur Ping Game !</p>
+<p class="${cssSubTitle}" >Essaie d'exploser un max de bulles avant qu'elles ne te touchent</p>
+<button id="start-button" style="--clr:${getColor()}"  class="${cssButton}" type="button"><span>Jouer</span><i></button>`;
+
+const alreadyPlayedModal = (
+  props: PlayerDataType
+) => `<p class="${cssTitle}" >Bienvenue sur Ping Game !</p>
+<p class="${cssSubTitle}" >Essaie de battre ton meilleur score : ${props.bestScore} points</p>
+<button id="start-button" style="--clr:${getColor()}"  class="${cssButton}" type="button"><span>Jouer</span><i></button>`;
 
 const lostGameModal = (props: PlayerDataType) => `
-<p>Partie terminée !</p>
-<p>Ton score actuel est de ${props.score} points !</p>
-<p>Ton meilleur score : ${props.bestScore} points</p>
-<p>Veux-tu réessayer ?</p>
-<button id="restart-button">Rejouer</button>`;
+<p class="${cssTitle}" >Partie terminée !</p>
+<div><p class="${cssSubTitle}" >Ton score est de ${props.score} points</p>
+<p class="${cssText}" >Ton meilleur score : ${props.bestScore} points</p></div>
+<button id="restart-button" style="--clr:${getColor()}" class="${cssButton}" type="button"><span>Rejouer ?</span><i></button>`;
 
 function init() {
   store.animationId = null;
@@ -140,11 +177,6 @@ function addPlayer() {
 function spawnEnemies() {
   setInterval(() => {
     const radius = Math.random() * (30 - 4) + 4;
-
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-    const color = `rgb(${r}, ${g}, ${b})`;
 
     const randomValue = Math.random();
     let x, y;
@@ -168,7 +200,7 @@ function spawnEnemies() {
       y: Math.sin(angle),
     };
 
-    store.enemies.push(new Enemy(x, y, radius, color, velocity));
+    store.enemies.push(new Enemy(x, y, radius, getColor(), velocity));
   }, 1000);
 }
 
@@ -187,7 +219,10 @@ function gameOver() {
   window.localStorage.setItem(
     'ping_game_player',
     JSON.stringify({
-      bestScore: playerData.bestScore > store.playerScore ? playerData.bestScore : store.playerScore,
+      bestScore:
+        playerData.bestScore > store.playerScore
+          ? playerData.bestScore
+          : store.playerScore,
       score: store.playerScore,
       level: 0,
     })
@@ -200,7 +235,7 @@ function gameOver() {
 
 function animate() {
   store.animationId = requestAnimationFrame(animate);
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  ctx.fillStyle = '#1f1a30';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
 
@@ -226,15 +261,24 @@ function animate() {
 
   store.enemies.forEach((enemy, enemyIndex) => {
     store.projectiles.forEach((projectile, projectileIndex) => {
-      const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+      const distance = Math.hypot(
+        projectile.x - enemy.x,
+        projectile.y - enemy.y
+      );
 
       if (distance - projectile.radius - enemy.radius <= 0) {
         for (let i = 0; i < 8; i++) {
           store.particles.push(
-            new Particle(projectile.x, projectile.y, Math.random() * (3 - 1) + 1, enemy.color, {
-              x: (Math.random() - 0.5) * 3,
-              y: (Math.random() - 0.5) * 3,
-            })
+            new Particle(
+              projectile.x,
+              projectile.y,
+              Math.random() * (3 - 1) + 1,
+              enemy.color,
+              {
+                x: (Math.random() - 0.5) * 3,
+                y: (Math.random() - 0.5) * 3,
+              }
+            )
           );
         }
 
@@ -277,11 +321,9 @@ function drawProjectiles(event: MouseEvent) {
   store.projectiles.push(projectile);
 }
 
-// modal.style.cssText =
-//   "display: flex; flex-direction: column; justify-content: center; align-items: center; width: 50%; height: fit-content; background-color: white; position: absolute; inset: 0; margin: auto; padding: 10px; border-radius: 1rem";
 function addModal(bodyModal: string) {
   modal.className =
-    'flex flex-col justify-center items-center w-1/2 h-fit bg-white absolute inset-0 m-auto p-[10px] rounded-2xl';
+    'w-1/2 h-fit flex flex-col items-center space-y-4 gap-4 bg-[#27272c] absolute inset-0 m-auto rounded-2xl p-8';
   modal.innerHTML = bodyModal;
   document.body.insertBefore(modal, canvas);
 }
@@ -317,7 +359,9 @@ startButton.addEventListener('click', () => {
 });
 
 document.addEventListener('click', () => {
-  const restartButton = document?.querySelector('#restart-button') as HTMLElement;
+  const restartButton = document?.querySelector(
+    '#restart-button'
+  ) as HTMLElement;
 
   if (!restartButton) return;
   restartButton.addEventListener('click', () => {
