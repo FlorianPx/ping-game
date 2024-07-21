@@ -1,0 +1,58 @@
+button {
+  position: relative;
+  background: #444;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  letter-spacing: 0.1rem;
+  font-size: 1rem;
+  padding: 1rem;
+  transition: 0.2s;
+  border-radius:4rem;
+}
+button::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #27272C;
+  border-radius:4rem;
+}
+button:hover {
+  letter-spacing: 0.2rem;
+  background: var(--clr);
+}
+
+button span {
+  z-index: 1;
+}
+
+button i {
+  z-index: 1;
+  display: block;
+  content: "";
+  width: 10px;
+  height: 10px;
+  border: 2px solid #444;
+  background: #444;
+  transition: 0.2s;
+  border-radius:4rem;
+}
+button:hover i {
+  border: 2px solid var(--clr);
+  background: var(--clr);
+  animation: move 2s infinite;
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
